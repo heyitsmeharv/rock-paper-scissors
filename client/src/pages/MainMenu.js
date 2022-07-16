@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
 import styled from "styled-components";
 
 import styles from '../styles/pallette';
@@ -83,9 +82,7 @@ const FixedContainer = styled.div.attrs(props => { })`
   margin-right: 10px;
 `;
 
-const MainMenu = () => {
-  const ENDPOINT = "http://localhost:5000";
-  const socket = io.connect(ENDPOINT);
+const MainMenu = ({ socket, name, code }) => {
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -93,6 +90,10 @@ const MainMenu = () => {
       console.log(data);
     });
   }, []);
+
+  const joinGame = () => {
+    navigate("/joinRoom", { replace: true });
+  };
 
   return (
     <Background className="background">
@@ -112,10 +113,10 @@ const MainMenu = () => {
           </HeadingWrapper>
         </Flex>
         <Flex className="flex-container">
-          <Button className="button">
+          <Button onClick={() => navigate("createRoom", { replace: true })} className="button">
             Create Room
           </Button>
-          <Button onClick={() => navigate("rooms", { replace: true })} className="button">
+          <Button onClick={() => joinGame()} className="button">
             Join Room
           </Button>
         </Flex>
