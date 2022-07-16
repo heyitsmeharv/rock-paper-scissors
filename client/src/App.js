@@ -16,6 +16,7 @@ function App() {
   const [roomId, setRoomId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [player, setPlayer] = useState("");
 
   useEffect(() => {
     socket.emit('connection');
@@ -36,10 +37,10 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<MainMenu socket={socket} name={name} code={code} />} />
-        <Route path="/createRoom" element={<CreateRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} />} />
-        <Route path="/joinRoom" element={<JoinRoom socket={socket} name={name} code={code} setRoomId = { setRoomId } handleChange={handleChange} setBlank={setBlank} />} />
+        <Route path="/createRoom" element={<CreateRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
+        <Route path="/joinRoom" element={<JoinRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/waiting" element={<WaitingRoom socket={socket} name={name} code={code} roomId={roomId} />} />
-        <Route path="/game" element={<Game socket={socket} roomId={roomId} />} />
+        <Route path="/game" element={<Game socket={socket} roomId={roomId} player={player} />} />
       </Routes>
     </Router>
   );

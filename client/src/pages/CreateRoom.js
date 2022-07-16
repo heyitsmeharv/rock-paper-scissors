@@ -60,13 +60,13 @@ const Input = styled.input.attrs(props => { })`
   }
 `;
 
-const CreateRoom = ({ socket, name, code, handleChange, setRoomId, setBlank }) => {
+const CreateRoom = ({ socket, name, code, handleChange, setRoomId, setPlayer, setBlank }) => {
   let navigate = useNavigate();
 
   const createGame = () => {
     socket.emit("createRoom", name, code);
-    socket.emit("joinRoom", name, code);
     setRoomId(code);
+    setPlayer("playerOne");
     setBlank();
     navigate("/waiting", { replace: true });
   };

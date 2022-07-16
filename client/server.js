@@ -11,13 +11,21 @@ const socket = new Server(server, {
 });
 
 let players = [];
-let playerOneChoice = "";
-let playerTwoChoice = "";
 let result = "";
 
 server.listen(5000, () => {
   console.log('listening on 5000');
 });
+
+const calcScore = winner => {
+  if (winner !== 'draw') {
+    if (winner === 'playerOneWins') {
+      players[0].score++;
+    } else {
+      players[1].score++;
+    }
+  }
+}
 
 const getWinner = (playerOneChoice, playerTwoChoice) => {
   if (playerOneChoice === playerTwoChoice) {
@@ -41,20 +49,24 @@ const getWinner = (playerOneChoice, playerTwoChoice) => {
       result = "playerOneWins";
     }
   }
-
   return result;
 }
 
 const resolve = roomId => {
-  const winner = getWinner(playerOneChoice, playerTwoChoice);
-  socket.sockets.to(roomId).emit("result", {
-    winner,
-    playerOneChoice,
-    playerTwoChoice,
-  });
-  playerOneChoice = "";
-  playerTwoChoice = "";
-  result = "";
+  if (players[0]?.choice && players[1]?.choice) {
+    const winner = getWinner(players[0].choice, players[1].choice);
+    calcScore(winner);
+    socket.sockets.to(roomId).emit("result", {
+      winner,
+      playerOneChoice: players[0].choice,
+      playerTwoChoice: players[1].choice,
+      playerOneScore: players[0].score,
+      playerTwoScore: players[1].score,
+    });
+    players[0].choice = "";
+    players[1].choice = "";
+    result = "";
+  }
 }
 
 socket.on('connection', (socket) => {
@@ -64,6 +76,8 @@ socket.on('connection', (socket) => {
       socket: socket.id,
       name,
       roomId,
+      player: 'playerOne',
+      score: 0,
     })
     socket.join(roomId);
     socket.emit("newGame", name, roomId);
@@ -76,9 +90,10 @@ socket.on('connection', (socket) => {
         socket: socket.id,
         name,
         roomId,
+        player: 'playerTwo',
+        score: 0,
       });
-      socket.broadcast.to(roomId).emit("playerOne", players[0]?.name);
-      socket.emit("playerTwo", (players[1]?.name, roomId));
+      socket.broadcast.to(roomId).emit("opponentJoined", players);
       console.log('players', players);
     }
   });
@@ -87,15 +102,16 @@ socket.on('connection', (socket) => {
     socket.broadcast.to(roomId).emit(name, " has joined the game.");
   });
 
-  socket.on("choiceSelected", ({ room, choice, type }) => {
-    if (choice.length) {
-      type === 'PlayerOne' ? playerOneChoice = choice : playerTwoChoice = choice;
-      console.log(playerOneChoice, playerTwoChoice);
+  socket.on("choiceSelected", (room, choice, id) => {
+    console.log(players);
+    const playerChoice = players.find(x => x.socket === id);
+    if (playerChoice) {
+      playerChoice.choice = choice;
       resolve(room);
     }
   });
 
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
+  // socket.on('disconnect', () => {
+  //   console.log('user disconnected');
+  // });
 });
