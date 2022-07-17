@@ -12,6 +12,7 @@
     "graphql": "^16.3.0",
     "graphql-tag": "^2.12.6",
     "jwt-decode": "^3.1.2",
+    "nodemon": "^2.0.16",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-icons": "^4.3.1",
@@ -45,8 +46,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.16"
   }
 }
