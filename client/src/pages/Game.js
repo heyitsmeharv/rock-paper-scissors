@@ -33,11 +33,18 @@ const Flex = styled.div.attrs(props => { })`
   align-items: center;
 `;
 
+const Selection = styled.div.attrs(props => { })`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 10%;
+`;
+
 const Container = styled.div.attrs(props => { })`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  height: 70%;
+  height: 50%;
 `;
 
 const Heading = styled.h1.attrs(props => { })`
@@ -61,13 +68,82 @@ const IconWrapper = styled.button.attrs(props => { })`
     svg {
       color: #fff;
     }
+  `};
+
+  ${props => props.selected && props.status === 'win' && css`
+    border: 8px solid #fff;
+    background: ${styles.green};
+    cursor: pointer;
+    svg {
+      color: #fff;
+    }
+  `};
+
+  ${props => props.selected && props.status === 'lose' && css`
+    border: 8px solid #fff;
+    background: ${styles.red};
+    cursor: pointer;
+    svg {
+      color: #fff;
+    };
   `}
+
+  ${props => props.selected && props.status === 'draw' && css`
+    border: 8px solid #fff;
+    background: ${styles.orange};
+    cursor: pointer;
+    svg {
+      color: #fff;
+    };
+  `}
+`;
+
+const SelectionIcon = styled.div.attrs(props => { })`
+  ${props => props.status === 'win' && css`
+    svg {
+      color: ${styles.green};
+    }
+  `};
+
+  ${props => props.status === 'lose' && css`
+    svg {
+      color: ${styles.red};
+    }
+  `}
+
+  ${props => props.status === 'draw' && css`
+    svg {
+      color: ${styles.orange};
+    }
+  `};
+`;
+
+const OpponentSelectionIcon = styled.div.attrs(props => { })`
+  ${props => props.status === 'lose' && css`
+    svg {
+      color: ${styles.green};
+    }
+  `};
+
+  ${props => props.status === 'win' && css`
+    svg {
+      color: ${styles.red};
+    }
+  `}
+
+  ${props => props.status === 'draw' && css`
+    svg {
+      color: ${styles.orange};
+    }
+  `};
 `;
 
 const Game = ({ socket, roomId, player }) => {
   const [score, setScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
+  const [opponentOption, setOpponentOption] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
+  const [iconStatus, setIconStatus] = useState('');
 
   let navigate = useNavigate();
 
@@ -76,16 +152,22 @@ const Game = ({ socket, roomId, player }) => {
       console.log('data', data);
       if (player === 'playerOne') {
         setScore(data.playerOneScore);
-        setOpponentScore(data.playerTwoScore)
+        setOpponentScore(data.playerTwoScore);
+        setOpponentOption(data.playerTwoChoice);
+        setIconStatus(data.winner === 'draw' ? 'draw' : data.winner === 'playerOneWins' ? 'win' : 'lose');
       } else {
         setScore(data.playerTwoScore);
-        setOpponentScore(data.playerOneScore)
+        setOpponentScore(data.playerOneScore);
+        setOpponentOption(data.playerOneChoice);
+        setIconStatus(data.winner === 'draw' ? 'draw' : data.winner === 'playerTwoWins' ? 'win' : 'lose');
       }
-      setSelectedOption('');
     });
   }, []);
 
   const selectOption = option => {
+    setSelectedOption('');
+    setOpponentOption('');
+    setIconStatus('');
     setSelectedOption(option);
     socket.emit("choiceSelected", roomId, option, socket.id);
   }
@@ -97,14 +179,85 @@ const Game = ({ socket, roomId, player }) => {
         <Heading className="heading">You: {score}</Heading>
         <Heading className="heading">Opponent: {opponentScore}</Heading>
       </Flex>
+      <Selection>
+        {selectedOption === 'rock' && (
+          <Flex>
+            <SelectionIcon status={iconStatus}>
+              <StyledRockIcon />
+            </SelectionIcon>
+            <Heading>VS</Heading>
+            {opponentOption === 'rock' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledRockIcon />
+              </OpponentSelectionIcon>
+            )}
+            {opponentOption === 'paper' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledHandIcon />
+              </OpponentSelectionIcon>
+            )}
+            {opponentOption === 'scissors' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledScissorsIcon />
+              </OpponentSelectionIcon>
+            )}
+          </Flex>
+        )}
+        {selectedOption === 'paper' && (
+          <Flex>
+            <SelectionIcon status={iconStatus}>
+              <StyledHandIcon />
+            </SelectionIcon>
+            <Heading>VS</Heading>
+            {opponentOption === 'rock' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledRockIcon />
+              </OpponentSelectionIcon>
+            )}
+            {opponentOption === 'paper' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledHandIcon />
+              </OpponentSelectionIcon>
+            )}
+            {opponentOption === 'scissors' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledScissorsIcon />
+              </OpponentSelectionIcon>
+            )}
+          </Flex>
+        )}
+        {selectedOption === 'scissors' && (
+          <Flex>
+            <SelectionIcon status={iconStatus}>
+              <StyledScissorsIcon />
+            </SelectionIcon>
+            <Heading>VS</Heading>
+            {opponentOption === 'rock' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledRockIcon />
+              </OpponentSelectionIcon>
+            )}
+            {opponentOption === 'paper' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledHandIcon />
+              </OpponentSelectionIcon>
+            )}
+            {opponentOption === 'scissors' && (
+              <OpponentSelectionIcon status={iconStatus}>
+                <StyledScissorsIcon />
+              </OpponentSelectionIcon>
+            )}
+          </Flex>
+        )}
+      </Selection>
       <Container>
-        <IconWrapper selected={selectedOption === 'rock'} onClick={() => selectOption('rock')}>
+        <IconWrapper status={iconStatus} selected={selectedOption === 'rock'} onClick={() => selectOption('rock')}>
           <StyledRockIcon />
         </IconWrapper>
-        <IconWrapper selected={selectedOption === 'paper'} onClick={() => selectOption('paper')}>
+        <IconWrapper status={iconStatus} selected={selectedOption === 'paper'} onClick={() => selectOption('paper')}>
           <StyledHandIcon />
         </IconWrapper>
-        <IconWrapper selected={selectedOption === 'scissors'} onClick={() => selectOption('scissors')}>
+        <IconWrapper status={iconStatus} selected={selectedOption === 'scissors'} onClick={() => selectOption('scissors')}>
           <StyledScissorsIcon />
         </IconWrapper>
       </Container>
