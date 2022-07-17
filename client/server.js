@@ -71,7 +71,6 @@ const resolve = roomId => {
 
 socket.on('connection', (socket) => {
   socket.on("createRoom", (name, roomId) => {
-    console.log('createRoom', roomId);
     players.push({
       socket: socket.id,
       name,
@@ -80,7 +79,6 @@ socket.on('connection', (socket) => {
       score: 0,
     })
     socket.join(roomId);
-    socket.emit("newGame", name, roomId);
   });
 
   socket.on("joinRoom", (name, roomId) => {
@@ -94,7 +92,6 @@ socket.on('connection', (socket) => {
         score: 0,
       });
       socket.broadcast.to(roomId).emit("opponentJoined", players);
-      console.log('players', players);
     }
   });
 
@@ -103,7 +100,6 @@ socket.on('connection', (socket) => {
   });
 
   socket.on("choiceSelected", (room, choice, id) => {
-    console.log(players);
     const playerChoice = players.find(x => x.socket === id);
     if (playerChoice) {
       playerChoice.choice = choice;

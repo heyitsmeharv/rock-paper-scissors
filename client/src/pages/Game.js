@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { FaRegHandRock, FaRegHandPaper, FaRegHandScissors } from 'react-icons/fa';
 
@@ -53,27 +53,42 @@ const IconWrapper = styled.button.attrs(props => { })`
   border-radius: 50%;
   padding: 30px;
   background: ${styles.darkBlue};
-  :hover {
+
+  ${props => props.selected && css`
     border: 8px solid ${styles.blue};
     background: ${styles.lightBlue};
     cursor: pointer;
     svg {
       color: #fff;
     }
-  }
+  `}
 `;
 
-const Game = ({ socket, roomId }) => {
+const Game = ({ socket, roomId, player }) => {
   const [score, setScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
+  const [selectedOption, setSelectedOption] = useState('');
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("result", (...args) => {
-      console.log('args', args);
+    socket.on("result", data => {
+      console.log('data', data);
+      if (player === 'playerOne') {
+        setScore(data.playerOneScore);
+        setOpponentScore(data.playerTwoScore)
+      } else {
+        setScore(data.playerTwoScore);
+        setOpponentScore(data.playerOneScore)
+      }
+      setSelectedOption('');
     });
   }, []);
+
+  const selectOption = option => {
+    setSelectedOption(option);
+    socket.emit("choiceSelected", roomId, option, socket.id);
+  }
 
   return (
     <Background className="background">
@@ -83,13 +98,13 @@ const Game = ({ socket, roomId }) => {
         <Heading className="heading">Opponent: {opponentScore}</Heading>
       </Flex>
       <Container>
-        <IconWrapper onClick={() => socket.emit("choiceSelected", roomId, 'rock', socket.id)}>
+        <IconWrapper selected={selectedOption === 'rock'} onClick={() => selectOption('rock')}>
           <StyledRockIcon />
         </IconWrapper>
-        <IconWrapper onClick={() => socket.emit("choiceSelected", roomId, 'paper', socket.id)}>
+        <IconWrapper selected={selectedOption === 'paper'} onClick={() => selectOption('paper')}>
           <StyledHandIcon />
         </IconWrapper>
-        <IconWrapper onClick={() => socket.emit("choiceSelected", roomId, 'scissors', socket.id)}>
+        <IconWrapper selected={selectedOption === 'scissors'} onClick={() => selectOption('scissors')}>
           <StyledScissorsIcon />
         </IconWrapper>
       </Container>

@@ -39,7 +39,7 @@ function App() {
         <Route path="/" element={<MainMenu socket={socket} name={name} code={code} />} />
         <Route path="/createRoom" element={<CreateRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/joinRoom" element={<JoinRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
-        <Route path="/waiting" element={<WaitingRoom socket={socket} name={name} code={code} roomId={roomId} />} />
+        <Route path="/waiting" element={<WaitingRoom socket={socket} name={name} code={code} roomId={roomId} player={player} />} />
         <Route path="/game" element={<Game socket={socket} roomId={roomId} player={player} />} />
       </Routes>
     </Router>
