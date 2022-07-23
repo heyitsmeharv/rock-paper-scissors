@@ -64,11 +64,13 @@ const JoinRoom = ({ socket, name, code, handleChange, setRoomId, setPlayer, setB
   let navigate = useNavigate();
 
   const joinGame = () => {
-    socket.emit("joinRoom", name, code);
-    setRoomId(code);
-    setBlank();
-    setPlayer("playerTwo");
-    navigate("/game", { replace: true });
+    socket.on("connection", data => {
+      socket.emit("joinRoom", name, code);
+      setRoomId(code);
+      setBlank();
+      setPlayer("playerTwo");
+      navigate("/game", { replace: true });
+    });
   };
 
   return (

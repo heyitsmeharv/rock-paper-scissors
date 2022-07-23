@@ -154,7 +154,7 @@ const GreenDot = styled.div.attrs(props => { })`
   display: inline-block;
 `;
 
-const Game = ({ socket, roomId, player, isConnected }) => {
+const Game = ({ socket, roomId, player }) => {
   const [score, setScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
   const [opponentOption, setOpponentOption] = useState('');
@@ -277,11 +277,6 @@ const Game = ({ socket, roomId, player, isConnected }) => {
           <StyledScissorsIcon />
         </IconWrapper>
       </Container>
-      {isConnected ? (
-        <RedDot />
-      ) : (
-        <GreenDot />
-      )}
     </Background>
   );
 };

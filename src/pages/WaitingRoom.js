@@ -81,10 +81,19 @@ const WaitingRoom = ({ socket, roomId }) => {
   let navigate = useNavigate();
 
   useEffect(() => {
+    socket.on("connection", data => {
+      console.log(data);
+      socket.on("opponentJoined", () => {
+        navigate("/game", { replace: true });
+      });
+    });
+  });
+
+  /* useEffect(() => {
     socket.on("opponentJoined", () => {
       navigate("/game", { replace: true });
     });
-  });
+  }); */
 
   return (
     <Background className="background">
