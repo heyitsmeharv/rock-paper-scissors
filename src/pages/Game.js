@@ -138,7 +138,23 @@ const OpponentSelectionIcon = styled.div.attrs(props => { })`
   `};
 `;
 
-const Game = ({ socket, roomId, player }) => {
+const RedDot = styled.div.attrs(props => { })`
+  height: 25px;
+  width: 25px;
+  background-color: ${styles.red};
+  border-radius: 50%;
+  display: inline-block;
+`;
+
+const GreenDot = styled.div.attrs(props => { })`
+  height: 25px;
+  width: 25px;
+  background-color: ${styles.green};
+  border-radius: 50%;
+  display: inline-block;
+`;
+
+const Game = ({ socket, roomId, player, isConnected }) => {
   const [score, setScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
   const [opponentOption, setOpponentOption] = useState('');
@@ -261,6 +277,11 @@ const Game = ({ socket, roomId, player }) => {
           <StyledScissorsIcon />
         </IconWrapper>
       </Container>
+      {isConnected ? (
+        <RedDot />
+      ) : (
+        <GreenDot />
+      )}
     </Background>
   );
 };
