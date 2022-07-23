@@ -98,14 +98,8 @@ const GreenDot = styled.div.attrs(props => { })`
   display: inline-block;
 `;
 
-const MainMenu = ({ socket }) => {
+const MainMenu = () => {
   let navigate = useNavigate();
-
-  useEffect(() => {
-    socket.on("connection", data => {
-      console.log(data);
-    });
-  }, [socket]);
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
