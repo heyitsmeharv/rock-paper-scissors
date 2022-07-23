@@ -105,7 +105,7 @@ const MainMenu = ({ socket }) => {
     socket.on("connection", data => {
       console.log(data);
     });
-  }, []);
+  }, [socket]);
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });

@@ -21,11 +21,11 @@ function App() {
   const [code, setCode] = useState("");
   const [player, setPlayer] = useState("");
 
-  // useEffect(() => {
-  //   socket.on("connection", data => {
-  //     console.log(data);
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket.on("connection", data => {
+      console.log(data);
+    });
+  }, []);
 
   const setBlank = () => {
     setName("");
