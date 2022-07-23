@@ -15,14 +15,17 @@ const socket = io(ENDPOINT, {
 });
 
 function App() {
+  const [isConnected] = useState(socket?.connected);
   const [roomId, setRoomId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [player, setPlayer] = useState("");
 
-  // useEffect(() => {
-  //   socket.emit('connection');
-  // }, [isConnected]);
+  useEffect(() => {
+    socket.on("connection", data => {
+      console.log(data);
+    });
+  }, []);
 
   const setBlank = () => {
     setName("");
@@ -38,7 +41,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainMenu socket={socket} name={name} code={code} isConnected={isConnected} />} />
+        <Route path="/" element={<MainMenu isConnected={isConnected} />} />
         <Route path="/createRoom" element={<CreateRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/joinRoom" element={<JoinRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/waiting" element={<WaitingRoom socket={socket} name={name} code={code} roomId={roomId} player={player} />} />

@@ -98,15 +98,14 @@ const GreenDot = styled.div.attrs(props => { })`
   display: inline-block;
 `;
 
-const MainMenu = ({ socket, name, code }) => {
-  const [isConnected] = useState(socket?.connected);
+const MainMenu = ({ isConnected }) => {
   let navigate = useNavigate();
 
-  useEffect(() => {
+  /* useEffect(() => {
     socket.on("connection", data => {
       console.log(data);
     });
-  }, [socket]);
+  }, [socket]); */
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
