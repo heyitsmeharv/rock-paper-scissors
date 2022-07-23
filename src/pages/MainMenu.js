@@ -82,14 +82,31 @@ const FixedContainer = styled.div.attrs(props => { })`
   margin-right: 10px;
 `;
 
+const RedDot = styled.div.attrs(props => { })`
+  height: 25px;
+  width: 25px;
+  background-color: ${styles.red};
+  border-radius: 50%;
+  display: inline-block;
+`;
+
+const GreenDot = styled.div.attrs(props => { })`
+  height: 25px;
+  width: 25px;
+  background-color: ${styles.green};
+  border-radius: 50%;
+  display: inline-block;
+`;
+
 const MainMenu = ({ socket, name, code }) => {
+  const [isConnected] = useState(socket?.connected);
   let navigate = useNavigate();
 
   useEffect(() => {
     socket.on("connection", data => {
       console.log(data);
     });
-  }, []);
+  }, [socket]);
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
@@ -120,6 +137,12 @@ const MainMenu = ({ socket, name, code }) => {
             Join Room
           </Button>
         </Flex>
+        connection:
+        {isConnected ? (
+          <RedDot />
+        ) : (
+          <GreenDot />
+        )}
       </Container>
       <FixedContainer className="flex-container">
         made with <FaReact /> and <SiSocketdotio />
