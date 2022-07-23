@@ -9,7 +9,16 @@ import WaitingRoom from './pages/WaitingRoom';
 import Game from './pages/Game';
 
 const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
-const socket = io.connect(ENDPOINT);
+// const socket = io.connect(ENDPOINT);
+const socket = io(ENDPOINT, {
+  transportOptions: {
+    polling: {
+      extraHeaders: {
+        "my-custom-header": "abc"
+      }
+    }
+  }
+});
 
 function App() {
   const [isConnected] = useState(socket?.connected);
