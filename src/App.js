@@ -8,7 +8,7 @@ import JoinRoom from './pages/JoinRoom';
 import WaitingRoom from './pages/WaitingRoom';
 import Game from './pages/Game';
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
 const socket = io.connect(ENDPOINT);
 
 function App() {
