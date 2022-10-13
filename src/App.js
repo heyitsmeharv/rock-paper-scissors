@@ -24,7 +24,7 @@ function App() {
   const [player, setPlayer] = useState("");
 
   useEffect(() => {
-    socket.on("connection", data => {
+    socket.on("connect", data => {
       console.log(data);
       setIsConnected(true);
     });
