@@ -28,7 +28,7 @@ function App() {
       console.log(data);
       setIsConnected(true);
     });
-  }, []);
+  });
 
   const setBlank = () => {
     setName("");
