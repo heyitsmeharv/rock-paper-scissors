@@ -13,7 +13,7 @@ const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
 
 // const socket = io.connect(ENDPOINT);
 const socket = io(ENDPOINT, {
-  transports: ['websocket','polling', 'flashsocket'],
+  transports: ['websocket', 'polling', 'flashsocket'],
 });
 
 function App() {
@@ -24,11 +24,13 @@ function App() {
   const [player, setPlayer] = useState("");
 
   useEffect(() => {
-    socket.on("connect", data => {
-      console.log(data);
-      setIsConnected(true);
-    });
-  });
+    if (!socket.connected) {
+      socket.on("connect", data => {
+        console.log(data);
+        setIsConnected(true);
+      });
+    }
+  }, []);
 
   const setBlank = () => {
     setName("");
