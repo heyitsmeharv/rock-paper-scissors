@@ -130,9 +130,6 @@ const MainMenu = ({ socket, isConnected }) => {
     }
   }, [socket]); */
 
-  console.log('socket', socket);
-  console.log('isConnected', isConnected);
-
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
   };

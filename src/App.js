@@ -8,14 +8,6 @@ import JoinRoom from './pages/JoinRoom';
 import WaitingRoom from './pages/WaitingRoom';
 import Game from './pages/Game';
 
-const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
-// const ENDPOINT = "http://localhost:5000";
-
-// const socket = io.connect(ENDPOINT);
-const socket = io(ENDPOINT, {
-  transports: ['websocket', 'polling', 'flashsocket'],
-});
-
 function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [roomId, setRoomId] = useState("");
@@ -23,14 +15,22 @@ function App() {
   const [code, setCode] = useState("");
   const [player, setPlayer] = useState("");
 
+  const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
+  // const ENDPOINT = "http://localhost:5000";
+  const socket = io(ENDPOINT, {
+    transports: ['websocket', 'polling', 'flashsocket'],
+  });
+
   useEffect(() => {
-    if (!socket.connected) {
-      socket.on("connect", data => {
-        console.log(data);
-        setIsConnected(true);
-      });
-    }
+    socket.on("connect", data => {
+      console.log(data);
+      setIsConnected(true);
+    });
+    console.log('socket', socket);
+    console.log('isConnected', isConnected);
   }, [socket]);
+
+
 
   const setBlank = () => {
     setName("");
