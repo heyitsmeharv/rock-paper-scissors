@@ -117,18 +117,18 @@ const Spinner = styled.div.attrs(props => { })`
   };
 `;
 
-const MainMenu = ({ socket }) => {
-  const [isConnected, setIsConnected] = useState(false);
+const MainMenu = ({ socket, isConnected }) => {
+  /* const [isConnected, setIsConnected] = useState(false); */
   let navigate = useNavigate();
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!isConnected) {
       socket.on("connection", data => {
         console.log(data);
         setIsConnected(true)
       });
     }
-  }, [socket]);
+  }, [socket]); */
 
   console.log('socket', socket);
   console.log('isConnected', isConnected);

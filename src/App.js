@@ -8,7 +8,7 @@ import JoinRoom from './pages/JoinRoom';
 import WaitingRoom from './pages/WaitingRoom';
 import Game from './pages/Game';
 
-const ENDPOINT = "ws://rockpaperscissors-be.herokuapp.com/";
+const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
 // const ENDPOINT = "http://localhost:5000";
 
 // const socket = io.connect(ENDPOINT);
@@ -17,7 +17,7 @@ const socket = io(ENDPOINT, {
 });
 
 function App() {
-  // const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
@@ -26,6 +26,7 @@ function App() {
   useEffect(() => {
     socket.on("connection", data => {
       console.log(data);
+      setIsConnected(true);
     });
   }, []);
 
@@ -43,7 +44,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainMenu socket={socket} />} />
+        <Route path="/" element={<MainMenu socket={socket} isConnected={isConnected} />} />
         <Route path="/createRoom" element={<CreateRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/joinRoom" element={<JoinRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/waiting" element={<WaitingRoom socket={socket} name={name} code={code} roomId={roomId} player={player} />} />
