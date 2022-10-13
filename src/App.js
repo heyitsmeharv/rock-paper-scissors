@@ -23,9 +23,13 @@ function App() {
   const [player, setPlayer] = useState("");
 
   useEffect(() => {
-    socket.on("connection", data => {
-      console.log('data', data);
-    });
+    try {
+      socket.on("connection", data => {
+        console.log('data', data);
+      });
+    } catch (error) {
+      console.log('failed to establish connection', error);
+    }
   }, []);
 
   const setBlank = () => {
