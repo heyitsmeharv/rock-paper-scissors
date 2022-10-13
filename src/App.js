@@ -8,21 +8,20 @@ import JoinRoom from './pages/JoinRoom';
 import WaitingRoom from './pages/WaitingRoom';
 import Game from './pages/Game';
 
+const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
+// const ENDPOINT = "http://localhost:5000";
+
+// const socket = io.connect(ENDPOINT);
+const socket = io(ENDPOINT, {
+  transports: ['websocket', 'polling', 'flashsocket'],
+});
+
 function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [player, setPlayer] = useState("");
-
-  const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
-  // const ENDPOINT = "http://localhost:5000";
-
-  // const socket = io.connect(ENDPOINT);
-  const socket = io(ENDPOINT, {
-    transports: ['websocket', 'polling', 'flashsocket'],
-  });
-
 
   useEffect(() => {
     try {
