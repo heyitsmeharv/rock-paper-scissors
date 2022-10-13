@@ -13,7 +13,7 @@ const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
 
 // const socket = io.connect(ENDPOINT);
 const socket = io(ENDPOINT, {
-  transports: ['websocket'],
+  transports: ['websocket','polling', 'flashsocket'],
 });
 
 function App() {
