@@ -17,22 +17,23 @@ const socket = io(ENDPOINT, {
 });
 
 function App() {
+  const [isConnected, setIsConnected] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [player, setPlayer] = useState("");
 
-  // useEffect(() => {
-  //   try {
-  //     socket.on("connection", data => {
-  //       console.log('data', data);
-  //       setIsConnected(true);
-  //     });
-  //   } catch (error) {
-  //     console.log('failed to establish connection', error);
-  //     setIsConnected(false);
-  //   }
-  // }, []);
+  useEffect(() => {
+    try {
+      socket.on("connection", data => {
+        console.log('data', data);
+        setIsConnected(true);
+      });
+    } catch (error) {
+      console.log('failed to establish connection', error);
+      setIsConnected(false);
+    }
+  }, []);
 
   const setBlank = () => {
     setName("");
@@ -48,7 +49,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainMenu socket={socket} />} />
+        <Route path="/" element={<MainMenu socket={socket} isConnected={isConnected} />} />
         <Route path="/createRoom" element={<CreateRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/joinRoom" element={<JoinRoom socket={socket} name={name} code={code} setRoomId={setRoomId} handleChange={handleChange} setBlank={setBlank} setPlayer={setPlayer} />} />
         <Route path="/waiting" element={<WaitingRoom socket={socket} name={name} code={code} roomId={roomId} player={player} />} />

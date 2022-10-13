@@ -98,11 +98,11 @@ const GreenDot = styled.div.attrs(props => { })`
   display: inline-block;
 `;
 
-const MainMenu = ({ socket }) => {
-  const [isConnected, setIsConnected] = useState(false);
+const MainMenu = ({ socket, isConnected }) => {
+  /* const [isConnected, setIsConnected] = useState(false); */
   let navigate = useNavigate();
 
-  useEffect(() => {
+  /* useEffect(() => {
     try {
       socket.on("connection", data => {
         console.log('data', data);
@@ -112,7 +112,7 @@ const MainMenu = ({ socket }) => {
       console.log('failed to establish connection', error);
       setIsConnected(false);
     }
-  }, [socket]);
+  }, [socket]); */
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
