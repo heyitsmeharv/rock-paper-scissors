@@ -13,7 +13,7 @@ const ENDPOINT = "https://rockpaperscissors-be.herokuapp.com/";
 
 // const socket = io.connect(ENDPOINT);
 const socket = io(ENDPOINT, {
-  transports: ['websocket', 'polling', 'flashsocket'],
+  transports: ['websocket'],
 });
 
 function App() {
@@ -24,13 +24,9 @@ function App() {
   const [player, setPlayer] = useState("");
 
   useEffect(() => {
-    try {
-      socket.on("connection", data => {
-        console.log('data', data);
-      });
-    } catch (error) {
-      console.log('failed to establish connection', error);
-    }
+    socket.on("connection", data => {
+      console.log(data);
+    });
   }, []);
 
   const setBlank = () => {

@@ -11,7 +11,7 @@ const StyledRockIcon = styled(FaRegHandRock)`
   font-size: 8rem;
   color: ${styles.lightBlue};
   @media only screen and (max-width: 500px) {
-    font-size: 2rem;
+    font-size: 3rem;
   };
 `;
 
@@ -19,7 +19,7 @@ const StyledHandIcon = styled(FaRegHandPaper)`
   font-size: 8rem;
   color: ${styles.lightBlue};
   @media only screen and (max-width: 500px) {
-    font-size: 2rem;
+    font-size: 3rem;
   };
 `;
 
@@ -27,7 +27,7 @@ const StyledScissorsIcon = styled(FaRegHandScissors)`
   font-size: 8rem;
   color: ${styles.lightBlue};
   @media only screen and (max-width: 500px) {
-    font-size: 2rem;
+    font-size: 3rem;
   };
 `;
 
@@ -65,7 +65,7 @@ const Heading = styled.h1.attrs(props => { })`
   font-weight: bold;
   color: #fff;
   @media only screen and (max-width: 500px) {
-    font-size: 2rem;
+    font-size: 3rem;
   };
 `;
 
@@ -95,42 +95,43 @@ const FixedContainer = styled.div.attrs(props => { })`
 `;
 
 const Spinner = styled.div.attrs(props => { })`
-  border: 16px solid #fff;
-  border-top: 16px #fff solid;
+  border: 8px solid ${styles.lightBlue};
+  border-top: 8px #fff solid;
   border-radius: 50%;
-  height: 120px;
-  width: 120px;
+  height: 50px;
+  width: 50px;
   animation: spin 2s linear infinite;
 
   @keyframes spin {
     0% {
       transform: rotate(0deg);
     }
-
     100% {
       transform: rotate(360deg);
     }
   }
+
+  @media only screen and (max-width: 500px) {
+    height: 25px;
+    width: 25px;
+  };
 `;
 
 const MainMenu = ({ socket }) => {
   const [isConnected, setIsConnected] = useState(false);
   let navigate = useNavigate();
 
-  console.log('socket', socket);
-  console.log('isConnected', isConnected);
-
   useEffect(() => {
-    try {
+    if (!isConnected) {
       socket.on("connection", data => {
-        console.log('data', data);
-        setIsConnected(true);
+        console.log(data);
+        setIsConnected(true)
       });
-    } catch (error) {
-      console.log('failed to establish connection', error);
-      setIsConnected(false);
     }
   }, [socket]);
+
+  console.log('socket', socket);
+  console.log('isConnected', isConnected);
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
