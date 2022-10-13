@@ -30,7 +30,7 @@ function App() {
         setIsConnected(true);
       });
     }
-  }, []);
+  }, [socket]);
 
   const setBlank = () => {
     setName("");
