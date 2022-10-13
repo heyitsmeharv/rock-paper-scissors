@@ -8,18 +8,27 @@ import { FaRegHandRock, FaRegHandPaper, FaRegHandScissors, FaReact } from 'react
 import { SiSocketdotio } from 'react-icons/si';
 
 const StyledRockIcon = styled(FaRegHandRock)`
-  font-size: 4rem;
-  color: ${styles.lightBlue}
+  font-size: 8rem;
+  color: ${styles.lightBlue};
+  @media only screen and (max-width: 500px) {
+    font-size: 2rem;
+  };
 `;
 
 const StyledHandIcon = styled(FaRegHandPaper)`
-  font-size: 4rem;
-  color: ${styles.lightBlue}
+  font-size: 8rem;
+  color: ${styles.lightBlue};
+  @media only screen and (max-width: 500px) {
+    font-size: 2rem;
+  };
 `;
 
 const StyledScissorsIcon = styled(FaRegHandScissors)`
-  font-size: 4rem;
-  color: ${styles.lightBlue}
+  font-size: 8rem;
+  color: ${styles.lightBlue};
+  @media only screen and (max-width: 500px) {
+    font-size: 2rem;
+  };
 `;
 
 const Background = styled.div.attrs(props => { })`
@@ -55,6 +64,9 @@ const Heading = styled.h1.attrs(props => { })`
   font-size: 4rem;
   font-weight: bold;
   color: #fff;
+  @media only screen and (max-width: 500px) {
+    font-size: 2rem;
+  };
 `;
 
 const Button = styled.button.attrs(props => { })`
