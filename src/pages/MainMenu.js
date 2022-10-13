@@ -102,6 +102,8 @@ const MainMenu = ({ socket, isConnected }) => {
   /* const [isConnected, setIsConnected] = useState(false); */
   let navigate = useNavigate();
 
+  console.log('socket', socket);
+
   /* useEffect(() => {
     try {
       socket.on("connection", data => {
