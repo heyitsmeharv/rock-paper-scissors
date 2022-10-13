@@ -22,15 +22,17 @@ function App() {
   const [code, setCode] = useState("");
   const [player, setPlayer] = useState("");
 
-  useEffect(() => {
-    try {
-      socket.on("connection", data => {
-        console.log('data', data);
-      });
-    } catch (error) {
-      console.log('failed to establish connection', error);
-    }
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     socket.on("connection", data => {
+  //       console.log('data', data);
+  //       setIsConnected(true);
+  //     });
+  //   } catch (error) {
+  //     console.log('failed to establish connection', error);
+  //     setIsConnected(false);
+  //   }
+  // }, []);
 
   const setBlank = () => {
     setName("");

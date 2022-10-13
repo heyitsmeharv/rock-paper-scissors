@@ -99,12 +99,19 @@ const GreenDot = styled.div.attrs(props => { })`
 `;
 
 const MainMenu = ({ socket }) => {
+  const [isConnected, setIsConnected] = useState(false);
   let navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("connection", data => {
-      console.log(data);
-    });
+    try {
+      socket.on("connection", data => {
+        console.log('data', data);
+        setIsConnected(true);
+      });
+    } catch (error) {
+      console.log('failed to establish connection', error);
+      setIsConnected(false);
+    }
   }, [socket]);
 
   const joinGame = () => {
@@ -129,12 +136,18 @@ const MainMenu = ({ socket }) => {
           </HeadingWrapper>
         </Flex>
         <Flex className="flex-container">
-          <Button onClick={() => navigate("createRoom", { replace: true })} className="button">
-            Create Room
-          </Button>
-          <Button onClick={() => joinGame()} className="button">
-            Join Room
-          </Button>
+          {isConnected ? (
+            <>
+              <Button onClick={() => navigate("createRoom", { replace: true })} className="button">
+                Create Room
+              </Button>
+              <Button onClick={() => joinGame()} className="button">
+                Join Room
+              </Button>
+            </>
+          ) : (
+            <div>loading...</div>
+          )}
         </Flex>
       </Container>
       <FixedContainer className="flex-container">
