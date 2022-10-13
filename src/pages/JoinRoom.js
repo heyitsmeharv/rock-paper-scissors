@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -62,6 +62,12 @@ const Input = styled.input.attrs(props => { })`
 
 const JoinRoom = ({ socket, name, code, handleChange, setRoomId, setPlayer, setBlank }) => {
   let navigate = useNavigate();
+
+  useEffect(() => {
+    socket.on("getRooms", data => {
+      console.log('data', data);
+    });
+  }, []);
 
   const joinGame = () => {
     socket.emit("joinRoom", name, code);

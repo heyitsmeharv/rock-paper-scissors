@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
+import { motion } from 'framer-motion';
 
 import { FaRegHandRock, FaRegHandPaper, FaRegHandScissors } from 'react-icons/fa';
 
@@ -9,16 +10,25 @@ import styles from '../styles/pallette';
 const StyledRockIcon = styled(FaRegHandRock)`
   font-size: 8rem;
   color: ${styles.lightBlue};
+  @media only screen and (max-width: 500px) {
+    font-size: 4rem;
+  };
 `;
 
 const StyledHandIcon = styled(FaRegHandPaper)`
   font-size: 8rem;
   color: ${styles.lightBlue};
+  @media only screen and (max-width: 500px) {
+    font-size: 4rem;
+  };
 `;
 
 const StyledScissorsIcon = styled(FaRegHandScissors)`
   font-size: 8rem;
   color: ${styles.lightBlue};
+  @media only screen and (max-width: 500px) {
+    font-size: 4rem;
+  };
 `;
 
 const Background = styled.div.attrs(props => { })`
@@ -29,8 +39,20 @@ const Background = styled.div.attrs(props => { })`
 
 const Flex = styled.div.attrs(props => { })`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
+`;
+
+const InfoWrapper = styled.div.attrs(props => { })`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 2%;
+`;
+
+const ScoreWrapper = styled.div.attrs(props => { })`
+  display: flex;
+  justify-content: space-evenly
 `;
 
 const Selection = styled.div.attrs(props => { })`
@@ -45,6 +67,11 @@ const Container = styled.div.attrs(props => { })`
   justify-content: space-evenly;
   align-items: center;
   height: 50%;
+
+  @media only screen and (max-width: 500px) {
+    flex-direction: column;
+    height: 70%;
+  };
 `;
 
 const Heading = styled.h1.attrs(props => { })`
@@ -55,11 +82,15 @@ const Heading = styled.h1.attrs(props => { })`
   padding: 12px 24px;
 `;
 
-const IconWrapper = styled.button.attrs(props => { })`
+const IconWrapper = styled(motion.button)`
   border: 5px solid #fff;
   border-radius: 50%;
   padding: 30px;
   background: ${styles.darkBlue};
+
+  @media only screen and (max-width: 500px) {
+    padding: 15px;
+  };
 
   ${props => props.selected && css`
     border: 8px solid ${styles.blue};
@@ -98,7 +129,7 @@ const IconWrapper = styled.button.attrs(props => { })`
   `}
 `;
 
-const SelectionIcon = styled.div.attrs(props => { })`
+const SelectionIcon = styled(motion.div)`
   ${props => props.status === 'win' && css`
     svg {
       color: ${styles.green};
@@ -118,7 +149,7 @@ const SelectionIcon = styled.div.attrs(props => { })`
   `};
 `;
 
-const OpponentSelectionIcon = styled.div.attrs(props => { })`
+const OpponentSelectionIcon = styled(motion.div)`
   ${props => props.status === 'lose' && css`
     svg {
       color: ${styles.green};
@@ -154,18 +185,40 @@ const GreenDot = styled.div.attrs(props => { })`
   display: inline-block;
 `;
 
+const Button = styled.button.attrs(props => { })`
+  color: #fff;
+  border: 2px solid ${styles.lightBlue};
+  background: ${styles.blue};
+  border-radius: 3px;
+  width: 150px;
+  height: 25px;
+  margin: 0 15px;
+  :hover {
+    color: ${styles.lightBlue};
+    border: 2px solid ${styles.blue};
+    background: ${styles.darkBlue};
+    cursor: pointer;
+  }
+`;
+
 const Game = ({ socket, roomId, player }) => {
+  let navigate = useNavigate();
   const [score, setScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
   const [opponentOption, setOpponentOption] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const [iconStatus, setIconStatus] = useState('');
-
-  let navigate = useNavigate();
+  const [opponentConnection, setOpponentConnection] = useState(false);
 
   useEffect(() => {
+    socket.on("disconnect", data => {
+      console.log('data', data);
+      setOpponentConnection(false);
+    });
+
     socket.on("result", data => {
       console.log('data', data);
+      setOpponentConnection(true);
       if (player === 'playerOne') {
         setScore(data.playerOneScore);
         setOpponentScore(data.playerTwoScore);
@@ -180,6 +233,11 @@ const Game = ({ socket, roomId, player }) => {
     });
   }, []);
 
+  const leaveRoom = () => {
+    socket.emit("disconnect", roomId);
+    navigate("/", { replace: true });
+  }
+
   const selectOption = option => {
     setSelectedOption('');
     setOpponentOption('');
@@ -190,30 +248,83 @@ const Game = ({ socket, roomId, player }) => {
 
   return (
     <Background className="background">
-      <Heading className="heading">Room Id: {roomId}</Heading>
       <Flex>
+        <Heading className="heading">Room Id: {roomId}</Heading>
+        <Flex>
+          <InfoWrapper>
+            <Heading className="heading">Connected:</Heading>
+            {opponentConnection ? <GreenDot /> : <RedDot />}
+          </InfoWrapper>
+          <Button onClick={() => leaveRoom()} className="button">
+            Leave Room
+          </Button>
+        </Flex>
+
+      </Flex>
+      <ScoreWrapper>
         <Heading className="heading">You: {score}</Heading>
         <Heading className="heading">Opponent: {opponentScore}</Heading>
-      </Flex>
+      </ScoreWrapper>
       <Selection>
         {selectedOption === 'rock' && (
           <Flex>
-            <SelectionIcon status={iconStatus}>
+            <SelectionIcon
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                scale: {
+                  type: "spring",
+                  damping: 5,
+                  stiffness: 100,
+                  restDelta: 0.001
+                }
+              }}
+              status={iconStatus}>
               <StyledRockIcon />
             </SelectionIcon>
             <Heading>VS</Heading>
             {opponentOption === 'rock' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledRockIcon />
               </OpponentSelectionIcon>
             )}
             {opponentOption === 'paper' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledHandIcon />
               </OpponentSelectionIcon>
             )}
             {opponentOption === 'scissors' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledScissorsIcon />
               </OpponentSelectionIcon>
             )}
@@ -221,22 +332,63 @@ const Game = ({ socket, roomId, player }) => {
         )}
         {selectedOption === 'paper' && (
           <Flex>
-            <SelectionIcon status={iconStatus}>
+            <SelectionIcon
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                scale: {
+                  type: "spring",
+                  damping: 5,
+                  stiffness: 100,
+                  restDelta: 0.001
+                }
+              }}
+              status={iconStatus}>
               <StyledHandIcon />
             </SelectionIcon>
             <Heading>VS</Heading>
             {opponentOption === 'rock' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledRockIcon />
               </OpponentSelectionIcon>
             )}
             {opponentOption === 'paper' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledHandIcon />
               </OpponentSelectionIcon>
             )}
             {opponentOption === 'scissors' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledScissorsIcon />
               </OpponentSelectionIcon>
             )}
@@ -244,22 +396,63 @@ const Game = ({ socket, roomId, player }) => {
         )}
         {selectedOption === 'scissors' && (
           <Flex>
-            <SelectionIcon status={iconStatus}>
+            <SelectionIcon
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                scale: {
+                  type: "spring",
+                  damping: 5,
+                  stiffness: 100,
+                  restDelta: 0.001
+                }
+              }}
+              status={iconStatus}>
               <StyledScissorsIcon />
             </SelectionIcon>
             <Heading>VS</Heading>
             {opponentOption === 'rock' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledRockIcon />
               </OpponentSelectionIcon>
             )}
             {opponentOption === 'paper' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledHandIcon />
               </OpponentSelectionIcon>
             )}
             {opponentOption === 'scissors' && (
-              <OpponentSelectionIcon status={iconStatus}>
+              <OpponentSelectionIcon
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  scale: {
+                    type: "spring",
+                    damping: 3,
+                    restDelta: 0.01
+                  }
+                }}
+                status={iconStatus}>
                 <StyledScissorsIcon />
               </OpponentSelectionIcon>
             )}
@@ -267,17 +460,26 @@ const Game = ({ socket, roomId, player }) => {
         )}
       </Selection>
       <Container>
-        <IconWrapper status={iconStatus} selected={selectedOption === 'rock'} onClick={() => selectOption('rock')}>
+        <IconWrapper
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          status={iconStatus} selected={selectedOption === 'rock'} onClick={() => selectOption('rock')}>
           <StyledRockIcon />
         </IconWrapper>
-        <IconWrapper status={iconStatus} selected={selectedOption === 'paper'} onClick={() => selectOption('paper')}>
+        <IconWrapper
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          status={iconStatus} selected={selectedOption === 'paper'} onClick={() => selectOption('paper')}>
           <StyledHandIcon />
         </IconWrapper>
-        <IconWrapper status={iconStatus} selected={selectedOption === 'scissors'} onClick={() => selectOption('scissors')}>
+        <IconWrapper
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          status={iconStatus} selected={selectedOption === 'scissors'} onClick={() => selectOption('scissors')}>
           <StyledScissorsIcon />
         </IconWrapper>
       </Container>
-    </Background>
+    </Background >
   );
 };
 

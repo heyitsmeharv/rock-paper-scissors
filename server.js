@@ -1,21 +1,37 @@
+const cors = require("cors");
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
+app.use(cors());
 const server = createServer(app);
 const socket = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
   }
 });
+// const socket = new Server(server, {
+//   cors: {
+//     origin: ["*"],
+//     methods: ["GET", "POST"],
+//     allowedHeaders: ["Access-Control-Allow-Origin: *"],
+//   },
+//   handlePreflightRequest: (req, res) => {
+//     res.writeHead(200, {
+//       "Access-Control-Allow-Origin": "*",
+//       "Access-Control-Allow-Methods": "GET,POST",
+//     });
+//     res.end();
+//   }
+// });
 
 let players = [];
 let result = "";
 
-server.listen(5000, () => {
-  console.log('listening on 5000');
-});
+server.listen((process.env.PORT || 5000, () => {
+  console.log('connected');
+}));
 
 const calcScore = winner => {
   if (winner !== 'draw') {
@@ -70,6 +86,10 @@ const resolve = roomId => {
 }
 
 socket.on('connection', (socket) => {
+  socket.on("getRooms", () => {
+    socket.emit("availableRooms", socket.adapter.rooms);
+  });
+
   socket.on("createRoom", (name, roomId) => {
     players.push({
       socket: socket.id,
@@ -77,6 +97,7 @@ socket.on('connection', (socket) => {
       roomId,
       player: 'playerOne',
       score: 0,
+      connected: socket.connected
     })
     socket.join(roomId);
   });
@@ -90,6 +111,7 @@ socket.on('connection', (socket) => {
         roomId,
         player: 'playerTwo',
         score: 0,
+        connected: socket.connected
       });
       socket.broadcast.to(roomId).emit("opponentJoined", players);
     }
@@ -107,7 +129,8 @@ socket.on('connection', (socket) => {
     }
   });
 
-  // socket.on('disconnect', () => {
-  //   console.log('user disconnected');
-  // });
+  socket.on("disconnect", (roomId) => {
+    socket.sockets.to(roomId).emit("disconnect");
+    socket.leave(roomId);
+  });
 });
