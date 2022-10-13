@@ -82,29 +82,33 @@ const FixedContainer = styled.div.attrs(props => { })`
   margin-right: 10px;
 `;
 
-const RedDot = styled.div.attrs(props => { })`
-  height: 25px;
-  width: 25px;
-  background-color: ${styles.red};
+const Spinner = styled.div.attrs(props => { })`
+  border: 16px solid #fff;
+  border-top: 16px #fff solid;
   border-radius: 50%;
-  display: inline-block;
+  height: 120px;
+  width: 120px;
+  animation: spin 2s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `;
 
-const GreenDot = styled.div.attrs(props => { })`
-  height: 25px;
-  width: 25px;
-  background-color: ${styles.green};
-  border-radius: 50%;
-  display: inline-block;
-`;
-
-const MainMenu = ({ socket, isConnected }) => {
-  /* const [isConnected, setIsConnected] = useState(false); */
+const MainMenu = ({ socket }) => {
+  const [isConnected, setIsConnected] = useState(false);
   let navigate = useNavigate();
 
   console.log('socket', socket);
+  console.log('isConnected', isConnected);
 
-  /* useEffect(() => {
+  useEffect(() => {
     try {
       socket.on("connection", data => {
         console.log('data', data);
@@ -114,7 +118,7 @@ const MainMenu = ({ socket, isConnected }) => {
       console.log('failed to establish connection', error);
       setIsConnected(false);
     }
-  }, [socket]); */
+  }, [socket]);
 
   const joinGame = () => {
     navigate("/joinRoom", { replace: true });
@@ -148,7 +152,7 @@ const MainMenu = ({ socket, isConnected }) => {
               </Button>
             </>
           ) : (
-            <div>loading...</div>
+            <Spinner />
           )}
         </Flex>
       </Container>
