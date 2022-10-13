@@ -234,7 +234,6 @@ const Game = ({ socket, roomId, player }) => {
   }, []);
 
   const leaveRoom = () => {
-    socket.emit("disconnect", roomId);
     navigate("/", { replace: true });
   }
 
@@ -259,7 +258,6 @@ const Game = ({ socket, roomId, player }) => {
             Leave Room
           </Button>
         </Flex>
-
       </Flex>
       <ScoreWrapper>
         <Heading className="heading">You: {score}</Heading>

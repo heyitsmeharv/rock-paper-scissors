@@ -129,8 +129,9 @@ socket.on('connection', (socket) => {
     }
   });
 
-  socket.on("disconnect", (roomId) => {
-    socket.sockets.to(roomId).emit("disconnect");
-    socket.leave(roomId);
+  socket.on("disconnect", () => {
+    Object.keys(socket.sockets).forEach(s => {
+      socket.sockets[s].disconnect(true);
+    });
   });
 });
