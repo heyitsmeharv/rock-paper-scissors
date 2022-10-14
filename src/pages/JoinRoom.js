@@ -64,7 +64,7 @@ const JoinRoom = ({ socket, name, code, handleChange, setRoomId, setPlayer, setB
   let navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("getRooms", data => {
+    socket.emit("getRooms", data => {
       console.log('data', data);
     });
   }, []);
