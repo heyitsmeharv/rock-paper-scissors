@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { motion } from 'framer-motion';
 
-import { FaRegHandRock, FaRegHandPaper, FaRegHandScissors } from 'react-icons/fa';
+import { FaRegHandRock, FaRegHandPaper, FaRegHandScissors, FaReact } from 'react-icons/fa';
+import { IoMdExit } from 'react-icons/io';
+import { SiSocketdotio } from 'react-icons/si';
 
 import styles from '../styles/pallette';
 
@@ -34,13 +36,14 @@ const StyledScissorsIcon = styled(FaRegHandScissors)`
 const Background = styled.div.attrs(props => { })`
   width: 100%;
   height: 100vh;
-  background: ${styles.darkBlue}
+  background: ${styles.darkBlue};
 `;
 
 const Flex = styled.div.attrs(props => { })`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 100%;
 `;
 
 const InfoWrapper = styled.div.attrs(props => { })`
@@ -52,7 +55,7 @@ const InfoWrapper = styled.div.attrs(props => { })`
 
 const ScoreWrapper = styled.div.attrs(props => { })`
   display: flex;
-  justify-content: space-evenly
+  justify-content: center;
 `;
 
 const Selection = styled.div.attrs(props => { })`
@@ -62,24 +65,34 @@ const Selection = styled.div.attrs(props => { })`
   height: 10%;
 `;
 
+const ScoreSelectionWrapper = styled.div.attrs(props => { })`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Container = styled.div.attrs(props => { })`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  height: 50%;
+  width: 100%;
+  margin-top: 10rem;
 
   @media only screen and (max-width: 500px) {
-    flex-direction: column;
-    height: 70%;
+    margin-top: 5rem;
   };
 `;
 
 const Heading = styled.h1.attrs(props => { })`
-  font-size: 2rem;
+  font-size: 3rem;
   font-style: italic;
   font-weight: bold;
   color: #fff;
   padding: 12px 24px;
+
+  @media only screen and (max-width: 500px) {
+    font-size: 2rem;
+  };
 `;
 
 const IconWrapper = styled(motion.button)`
@@ -201,6 +214,58 @@ const Button = styled.button.attrs(props => { })`
   }
 `;
 
+const BackButton = styled(IoMdExit)`
+  color: #fff;
+  font-size: 3rem;
+  border: 2px solid ${styles.lightBlue};
+  background: ${styles.blue};
+  border-radius: 50%;
+  margin: 10px;
+  padding: 10px;
+  :hover {
+    color: ${styles.lightBlue};
+    border: 2px solid ${styles.blue};
+    background: ${styles.darkBlue};
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 500px) {
+    font-size: 2rem;
+  }
+`;
+
+const FixedContainer = styled.div.attrs(props => { })`
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  color: #fff;
+  font-size: 1.5rem;
+  margin-right: 10px;
+`;
+
+const Spinner = styled.div.attrs(props => { })`
+  border: 8px solid ${styles.lightBlue};
+  border-top: 8px #fff solid;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  animation: spin 2s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media only screen and (max-width: 500px) {
+    height: 25px;
+    width: 25px;
+  };
+`;
+
 const Game = ({ socket, roomId, player }) => {
   let navigate = useNavigate();
   const [score, setScore] = useState(0);
@@ -250,213 +315,222 @@ const Game = ({ socket, roomId, player }) => {
       <Flex>
         <Heading className="heading">Room Id: {roomId}</Heading>
         <Flex>
-          <InfoWrapper>
+          {/* <InfoWrapper>
             <Heading className="heading">Connected:</Heading>
             {opponentConnection ? <GreenDot /> : <RedDot />}
-          </InfoWrapper>
-          <Button onClick={() => leaveRoom()} className="button">
-            Leave Room
-          </Button>
+          </InfoWrapper> */}
+          <BackButton onClick={() => leaveRoom()} className="button" />
         </Flex>
       </Flex>
-      <ScoreWrapper>
-        <Heading className="heading">You: {score}</Heading>
-        <Heading className="heading">Opponent: {opponentScore}</Heading>
-      </ScoreWrapper>
-      <Selection>
-        {selectedOption === 'rock' && (
-          <Flex>
-            <SelectionIcon
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                scale: {
-                  type: "spring",
-                  damping: 5,
-                  stiffness: 100,
-                  restDelta: 0.001
-                }
-              }}
-              status={iconStatus}>
-              <StyledRockIcon />
-            </SelectionIcon>
-            <Heading>VS</Heading>
-            {opponentOption === 'rock' && (
-              <OpponentSelectionIcon
+      <ScoreSelectionWrapper>
+        <ScoreWrapper>
+          <Heading className="heading">You: {score}</Heading>
+          <Heading className="heading">Opponent: {opponentScore}</Heading>
+        </ScoreWrapper>
+        <Selection>
+          {selectedOption === 'rock' && (
+            <Flex>
+              <SelectionIcon
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
                   scale: {
                     type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
+                    damping: 5,
+                    stiffness: 100,
+                    restDelta: 0.001
                   }
                 }}
                 status={iconStatus}>
                 <StyledRockIcon />
-              </OpponentSelectionIcon>
-            )}
-            {opponentOption === 'paper' && (
-              <OpponentSelectionIcon
+              </SelectionIcon>
+              <Heading>VS</Heading>
+              {opponentOption === '' && (
+                <Spinner />
+              )}
+              {opponentOption === 'rock' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledRockIcon />
+                </OpponentSelectionIcon>
+              )}
+              {opponentOption === 'paper' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledHandIcon />
+                </OpponentSelectionIcon>
+              )}
+              {opponentOption === 'scissors' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledScissorsIcon />
+                </OpponentSelectionIcon>
+              )}
+            </Flex>
+          )}
+          {selectedOption === 'paper' && (
+            <Flex>
+              <SelectionIcon
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
                   scale: {
                     type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
+                    damping: 5,
+                    stiffness: 100,
+                    restDelta: 0.001
                   }
                 }}
                 status={iconStatus}>
                 <StyledHandIcon />
-              </OpponentSelectionIcon>
-            )}
-            {opponentOption === 'scissors' && (
-              <OpponentSelectionIcon
+              </SelectionIcon>
+              <Heading>VS</Heading>
+              {opponentOption === '' && (
+                <Spinner />
+              )}
+              {opponentOption === 'rock' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledRockIcon />
+                </OpponentSelectionIcon>
+              )}
+              {opponentOption === 'paper' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledHandIcon />
+                </OpponentSelectionIcon>
+              )}
+              {opponentOption === 'scissors' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledScissorsIcon />
+                </OpponentSelectionIcon>
+              )}
+            </Flex>
+          )}
+          {selectedOption === 'scissors' && (
+            <Flex>
+              <SelectionIcon
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
                   scale: {
                     type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
+                    damping: 5,
+                    stiffness: 100,
+                    restDelta: 0.001
                   }
                 }}
                 status={iconStatus}>
                 <StyledScissorsIcon />
-              </OpponentSelectionIcon>
-            )}
-          </Flex>
-        )}
-        {selectedOption === 'paper' && (
-          <Flex>
-            <SelectionIcon
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                scale: {
-                  type: "spring",
-                  damping: 5,
-                  stiffness: 100,
-                  restDelta: 0.001
-                }
-              }}
-              status={iconStatus}>
-              <StyledHandIcon />
-            </SelectionIcon>
-            <Heading>VS</Heading>
-            {opponentOption === 'rock' && (
-              <OpponentSelectionIcon
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  scale: {
-                    type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
-                  }
-                }}
-                status={iconStatus}>
-                <StyledRockIcon />
-              </OpponentSelectionIcon>
-            )}
-            {opponentOption === 'paper' && (
-              <OpponentSelectionIcon
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  scale: {
-                    type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
-                  }
-                }}
-                status={iconStatus}>
-                <StyledHandIcon />
-              </OpponentSelectionIcon>
-            )}
-            {opponentOption === 'scissors' && (
-              <OpponentSelectionIcon
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  scale: {
-                    type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
-                  }
-                }}
-                status={iconStatus}>
-                <StyledScissorsIcon />
-              </OpponentSelectionIcon>
-            )}
-          </Flex>
-        )}
-        {selectedOption === 'scissors' && (
-          <Flex>
-            <SelectionIcon
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                scale: {
-                  type: "spring",
-                  damping: 5,
-                  stiffness: 100,
-                  restDelta: 0.001
-                }
-              }}
-              status={iconStatus}>
-              <StyledScissorsIcon />
-            </SelectionIcon>
-            <Heading>VS</Heading>
-            {opponentOption === 'rock' && (
-              <OpponentSelectionIcon
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  scale: {
-                    type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
-                  }
-                }}
-                status={iconStatus}>
-                <StyledRockIcon />
-              </OpponentSelectionIcon>
-            )}
-            {opponentOption === 'paper' && (
-              <OpponentSelectionIcon
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  scale: {
-                    type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
-                  }
-                }}
-                status={iconStatus}>
-                <StyledHandIcon />
-              </OpponentSelectionIcon>
-            )}
-            {opponentOption === 'scissors' && (
-              <OpponentSelectionIcon
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  scale: {
-                    type: "spring",
-                    damping: 3,
-                    restDelta: 0.01
-                  }
-                }}
-                status={iconStatus}>
-                <StyledScissorsIcon />
-              </OpponentSelectionIcon>
-            )}
-          </Flex>
-        )}
-      </Selection>
+              </SelectionIcon>
+              <Heading>VS</Heading>
+              {opponentOption === '' && (
+                <Spinner />
+              )}
+              {opponentOption === 'rock' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledRockIcon />
+                </OpponentSelectionIcon>
+              )}
+              {opponentOption === 'paper' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledHandIcon />
+                </OpponentSelectionIcon>
+              )}
+              {opponentOption === 'scissors' && (
+                <OpponentSelectionIcon
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    scale: {
+                      type: "spring",
+                      damping: 3,
+                      restDelta: 0.01
+                    }
+                  }}
+                  status={iconStatus}>
+                  <StyledScissorsIcon />
+                </OpponentSelectionIcon>
+              )}
+            </Flex>
+          )}
+        </Selection>
+      </ScoreSelectionWrapper>
       <Container>
         <IconWrapper
           whileHover={{ scale: 1.1 }}
@@ -464,6 +538,8 @@ const Game = ({ socket, roomId, player }) => {
           status={iconStatus} selected={selectedOption === 'rock'} onClick={() => selectOption('rock')}>
           <StyledRockIcon />
         </IconWrapper>
+      </Container>
+      <Container>
         <IconWrapper
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -477,7 +553,10 @@ const Game = ({ socket, roomId, player }) => {
           <StyledScissorsIcon />
         </IconWrapper>
       </Container>
-    </Background >
+      <FixedContainer className="flex-container">
+        made with <FaReact /> and <SiSocketdotio />
+      </FixedContainer>
+    </Background>
   );
 };
 

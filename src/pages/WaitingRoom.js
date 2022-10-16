@@ -4,12 +4,16 @@ import styled from "styled-components";
 
 import styles from '../styles/pallette';
 
+import { IoArrowBackOutline } from 'react-icons/io5';
+import { FaReact } from 'react-icons/fa';
 import { SiSocketdotio } from 'react-icons/si';
+
 
 const Background = styled.div.attrs(props => { })`
   width: 100%;
   height: 100vh;
-  background: ${styles.darkBlue}
+  background: ${styles.darkBlue};
+  display: flex;
 `;
 
 const Container = styled.div.attrs(props => { })`
@@ -18,11 +22,13 @@ const Container = styled.div.attrs(props => { })`
   justify-content: center;
   align-items: center;
   height: 100%;
+  width: 100%;
 `;
 
 const Flex = styled.div.attrs(props => { })`
   display: flex;
   align-items: center;
+  margin: 0 5%;
 `;
 
 const HeadingWrapper = styled.div.attrs(props => { })`
@@ -48,6 +54,45 @@ const SubHeading = styled.h2.attrs(props => { })`
   text-align: center;
   color: #fff;
   margin-bottom: 25px;
+`;
+
+const FixedContainerTop = styled.div.attrs(props => { })`
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: #fff;
+  font-size: 1.5rem;
+  margin: 10px;
+`;
+
+
+const BackButton = styled(IoArrowBackOutline)`
+  color: #fff;
+  font-size: 4rem;
+  border: 2px solid ${styles.lightBlue};
+  background: ${styles.blue};
+  border-radius: 50%;
+  margin: 0 5%;
+  padding: 10px;
+  :hover {
+    color: ${styles.lightBlue};
+    border: 2px solid ${styles.blue};
+    background: ${styles.darkBlue};
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 500px) {
+    font-size: 3rem;
+  }
+`;
+
+const FixedContainerBottom = styled.div.attrs(props => { })`
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  color: #fff;
+  font-size: 1.5rem;
+  margin-right: 10px;
 `;
 
 const Loader = styled.div.attrs(props => { })`
@@ -88,6 +133,9 @@ const WaitingRoom = ({ socket, roomId }) => {
 
   return (
     <Background className="background">
+      <FixedContainerTop>
+        <BackButton onClick={() => navigate("/", { replace: true })} className="button" />
+      </FixedContainerTop>
       <Container className="container">
         <Flex className="flex-container">
           <HeadingWrapper className="heading-wrapper">
@@ -97,6 +145,9 @@ const WaitingRoom = ({ socket, roomId }) => {
           </HeadingWrapper>
         </Flex>
       </Container>
+      <FixedContainerBottom className="flex-container">
+        made with <FaReact /> and <SiSocketdotio />
+      </FixedContainerBottom>
     </Background>
   );
 };

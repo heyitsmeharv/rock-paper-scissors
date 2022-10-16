@@ -8,7 +8,7 @@ app.use(cors());
 const server = createServer(app);
 const socket = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http:localhost:3000",
   }
 });
 // const socket = new Server(server, {
@@ -29,9 +29,9 @@ const socket = new Server(server, {
 let players = [];
 let result = "";
 
-server.listen((process.env.PORT || 5000, () => {
-  console.log('connected');
-}));
+server.listen(process.env.PORT || 5000, () => {
+  console.log(`listening on port: ${process.env.PORT}`);
+});
 
 const calcScore = winner => {
   if (winner !== 'draw') {
@@ -86,8 +86,9 @@ const resolve = roomId => {
 }
 
 socket.on('connection', (socket) => {
+
   socket.on("getRooms", () => {
-    socket.emit("availableRooms", socket.adapter.rooms);
+    socket.broadcast.emit("availableRooms", socket.adapter.rooms);
   });
 
   socket.on("createRoom", (name, roomId) => {
@@ -130,8 +131,11 @@ socket.on('connection', (socket) => {
   });
 
   socket.on("disconnect", () => {
-    Object.keys(socket.sockets).forEach(s => {
-      socket.sockets[s].disconnect(true);
-    });
+    if (socket.sockets) {
+      Object.keys(socket.sockets).forEach(s => {
+        socket.sockets[s].disconnect(true);
+      });
+    }
   });
+
 });

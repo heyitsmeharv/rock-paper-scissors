@@ -5,6 +5,8 @@ import styled from "styled-components";
 import styles from '../styles/pallette';
 
 import { FaRegHandRock, FaRegHandPaper, FaRegHandScissors, FaReact } from 'react-icons/fa';
+import { IoCreateOutline } from 'react-icons/io5'
+import { MdConnectWithoutContact } from 'react-icons/md'
 import { SiSocketdotio } from 'react-icons/si';
 
 const StyledRockIcon = styled(FaRegHandRock)`
@@ -34,7 +36,8 @@ const StyledScissorsIcon = styled(FaRegHandScissors)`
 const Background = styled.div.attrs(props => { })`
   width: 100%;
   height: 100vh;
-  background: ${styles.darkBlue}
+  background: ${styles.darkBlue};
+  display: flex;
 `;
 
 const Container = styled.div.attrs(props => { })`
@@ -43,11 +46,18 @@ const Container = styled.div.attrs(props => { })`
   justify-content: center;
   align-items: center;
   height: 100%;
+  width: 100%;
 `;
 
 const Flex = styled.div.attrs(props => { })`
   display: flex;
   align-items: center;
+  margin-top: 4rem;
+  place-content: center;
+  width: 100%;
+  /* @media only screen and (max-width: 500px) {
+    font-size: 100%;
+  }; */
 `;
 
 const HeadingWrapper = styled.div.attrs(props => { })`
@@ -56,8 +66,7 @@ const HeadingWrapper = styled.div.attrs(props => { })`
   justify-content: center;
   align-items: center;
   height: 100%;
-  width: 25%;
-  margin: 25px;
+  width: 33%;
 `;
 
 const Heading = styled.h1.attrs(props => { })`
@@ -85,8 +94,48 @@ const Button = styled.button.attrs(props => { })`
   }
 `;
 
+const CreateButton = styled(IoCreateOutline)`
+  color: #fff;
+  font-size: 4rem;
+  border: 2px solid ${styles.lightBlue};
+  background: ${styles.blue};
+  border-radius: 50%;
+  margin: 0 5%;
+  padding: 10px;
+  :hover {
+    color: ${styles.lightBlue};
+    border: 2px solid ${styles.blue};
+    background: ${styles.darkBlue};
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 500px) {
+    font-size: 3rem;
+  }
+`;
+
+const JoinButton = styled(MdConnectWithoutContact)`
+  color: #fff;
+  font-size: 4rem;
+  border: 2px solid ${styles.lightBlue};
+  background: ${styles.blue};
+  border-radius: 50%;
+  margin: 0 5%;
+  padding: 10px;
+  :hover {
+    color: ${styles.lightBlue};
+    border: 2px solid ${styles.blue};
+    background: ${styles.darkBlue};
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 500px) {
+    font-size: 3rem;
+  }
+`;
+
 const FixedContainer = styled.div.attrs(props => { })`
-  position: fixed;
+  position: absolute;
   bottom: 0px;
   right: 0px;
   color: #fff;
@@ -154,12 +203,14 @@ const MainMenu = ({ socket, isConnected }) => {
         <Flex className="flex-container">
           {isConnected ? (
             <>
-              <Button onClick={() => navigate("createRoom", { replace: true })} className="button">
+              <CreateButton onClick={() => navigate("createRoom", { replace: true })} className="button" />
+              <JoinButton onClick={() => joinGame()} className="button" />
+              {/* <Button onClick={() => navigate("createRoom", { replace: true })} className="button">
                 Create Room
               </Button>
               <Button onClick={() => joinGame()} className="button">
                 Join Room
-              </Button>
+              </Button> */}
             </>
           ) : (
             <Spinner />
@@ -169,7 +220,7 @@ const MainMenu = ({ socket, isConnected }) => {
       <FixedContainer className="flex-container">
         made with <FaReact /> and <SiSocketdotio />
       </FixedContainer>
-    </Background >
+    </Background>
   );
 };
 
